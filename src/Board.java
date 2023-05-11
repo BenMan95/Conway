@@ -14,6 +14,7 @@ public class Board extends JPanel implements ActionListener {
 
     private final Timer timer;
     private int delay;
+    private boolean paused;
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -25,9 +26,14 @@ public class Board extends JPanel implements ActionListener {
             for (int c = 0; c < cols; c++)
                 cells[r][c] = rand.nextBoolean();
 
-        delay = 100;
-        timer = new Timer(delay, this);
-        timer.start();
+        delay = 128;
+        timer = new Timer(125, this);
+        timer.setInitialDelay(0);
+        paused = true;
+
+        addMouseListener(new Mouse());
+        addKeyListener(new Keyboard());
+        setFocusable(true);
 
         Dimension size = new Dimension(cols * CELL_SIZE, rows * CELL_SIZE);
         setPreferredSize(size);
@@ -83,6 +89,50 @@ public class Board extends JPanel implements ActionListener {
                         count++;
         }
         return count;
+    }
+
+    private class Mouse extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (paused) {
+                int c = e.getX() / CELL_SIZE;
+                int r = e.getY() / CELL_SIZE;
+                int button = e.getButton();
+                if (button == MouseEvent.BUTTON1)
+                    cells[r][c] = true;
+                if (button == MouseEvent.BUTTON3)
+                    cells[r][c] = false;
+                repaint();
+            }
+        }
+    }
+
+    private class Keyboard extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            char key = e.getKeyChar();
+            if (key == ' ') {
+                if (paused) {
+                    paused = false;
+                    timer.start();
+                } else {
+                    paused = true;
+                    timer.stop();
+                }
+            } else if (key == ',') {
+                if (delay > 1)
+                    delay >>= 1;
+                timer.setDelay(delay);
+                System.out.println(delay);
+            } else if (key == '.') {
+                delay <<= 1;
+                timer.setDelay(delay);
+                System.out.println(delay);
+            } else if (paused) {
+                updateBoard();
+                repaint();
+            }
+        }
     }
 
 }
