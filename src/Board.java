@@ -121,14 +121,12 @@ public class Board extends JPanel implements ActionListener {
                 }
             } else if (key == ',') {
                 if (delay > 1)
-                    delay >>= 1;
+                    delay <<= 1;
                 timer.setDelay(delay);
-                System.out.println(delay);
             } else if (key == '.') {
-                delay <<= 1;
+                delay >>= 1;
                 timer.setDelay(delay);
-                System.out.println(delay);
-            } else if (paused) {
+            } else if (paused && key == '/') {
                 updateBoard();
                 repaint();
             }
