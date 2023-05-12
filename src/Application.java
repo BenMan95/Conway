@@ -1,4 +1,5 @@
 import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
 import javax.swing.*;
 
 public class Application extends JFrame {
@@ -20,6 +21,13 @@ public class Application extends JFrame {
         JMenu menu = new JMenu("Options");
         JMenuItem menuItem;
 
+        JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem("Grid");
+        checkBox.addItemListener(e -> {
+            board.setGrid(e.getStateChange() == ItemEvent.SELECTED);
+            board.repaint();
+        });
+        menu.add(checkBox);
+
         menuItem = new JMenuItem("Set size");
         menuItem.addActionListener(e -> {
             JTextField rowField = new JTextField(5);
@@ -36,8 +44,9 @@ public class Application extends JFrame {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     int rows = Integer.parseInt(rowField.getText());
-                    int cols = Integer.parseInt(rowField.getText());
+                    int cols = Integer.parseInt(colField.getText());
                     Board b = new Board(rows, cols);
+                    b.setGrid(checkBox.getState());
                     setBoard(b);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Input must be integers!", "Error", JOptionPane.ERROR_MESSAGE);

@@ -15,6 +15,7 @@ public class Board extends JPanel implements ActionListener {
     private final Timer timer;
     private int delay;
     private boolean paused;
+    private boolean grid;
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -50,8 +51,8 @@ public class Board extends JPanel implements ActionListener {
             int y = r * CELL_SIZE;
             for (int c = 0; c < cols; c++) {
                 int x = c * CELL_SIZE;
-                if (cells[r][c])
-                    g2d.fillRect(x+1, y+1, CELL_SIZE-2, CELL_SIZE-2);
+                if (cells[r][c]) g2d.fillRect(x+1, y+1, CELL_SIZE-1, CELL_SIZE-1);
+                if (grid) g2d.drawRect(x, y, CELL_SIZE, CELL_SIZE);
             }
         }
     }
@@ -73,7 +74,7 @@ public class Board extends JPanel implements ActionListener {
             if (rn < 0 || rn >= rows)
                 continue;
             for (int cn = c-1; cn <= c+1; cn++)
-                if (cn >= 0 && cn < rows)
+                if (cn >= 0 && cn < cols)
                     if (cells[rn][cn])
                         count++;
         }
@@ -84,6 +85,10 @@ public class Board extends JPanel implements ActionListener {
         paused = p;
         if (p) timer.stop();
         else timer.start();
+    }
+
+    public void setGrid(boolean g) {
+        grid = g;
     }
 
     @Override
